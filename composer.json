@@ -1,0 +1,29 @@
+{
+	"name" : "Carthage PHP framework",
+	"description" : "A php framework for small and medium projects",
+	"version": "1.0.0",
+	"type": "project",
+	"license" : "MIT",
+	"authors": [
+		{
+			"name": "Anis Ghabri",
+			"email": "ghabrianis@gmail.com",
+			"role": "Developer"
+		}
+	],
+	"minimum-stability": "dev",
+	"require" : {
+		"php": ">=5.5.0",
+		"opis/closure" : "^3.0.0"
+	},
+	"require-dev": {		
+		"symfony/debug" : "*.*",
+		"tracy/tracy": "*.*"
+	},
+    "autoload": {
+        "psr-4": {
+			"System\\":"system/",
+            "App\\": "app/"
+        }
+	}
+}

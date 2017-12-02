@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+
+    #Options +FollowSymLinks
+    RewriteEngine on
+
+    # Send request via index.php (again, not if its a real file or folder)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    #This last condition enables access to the images and css folders, and the robots.txt file
+    RewriteCond $1 !^(index\.php|assets|imgs|css|js|robots\.txt|favicon\.ico)
+    RewriteRule . index.php [L]
+    #RewriteRule ^(.*)$ index.php/$1 [L]
+
+
+</IfModule>

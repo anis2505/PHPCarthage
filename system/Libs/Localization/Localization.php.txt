@@ -1,0 +1,95 @@
+<?php
+namespace Darwin\Libs\Localization;
+
+uDarwin\ys\Core;
+
+class Localization
+{
+	
+	protected static $locale;
+	protected static $isLocalizationEnabled;
+	public static function factory($locale, $UriSegements, $isEmptyURI = false)
+	{
+		self::$locale = $locale;
+		
+	}
+	
+	private static function setLocalization($UriSegements, $isEmptyURI)
+	{
+		//$this->loadLocalizationConfig();
+		if(self::checkLocalizationStatus())
+		{
+			$lang = self::setLang($UriSegements, $isEmptyURI);
+			if($this->checkLang())
+			{
+				$this->setSessionLocalization();
+				$this->createLocalizationInstance();
+			}
+			else
+			{
+				throw new \Exception('The language '.$this->lang.' is not available', 404);
+			}
+		}
+	}
+
+	private static function checkLocalizationStatus()
+	{
+		return self::$isLocalizationEnabled = self::$locale['enabled'];
+	}
+	
+	private function getLangFromURI($UriSegements)
+	{
+		return array_shift($UriSegements);
+	}
+	
+	private function getLangFromSession()
+	{
+		return $this->session->localisation['lang'];
+	}
+	
+	private function getLangFromDefault()
+	{
+		return self::$locale['default_language'];
+	}
+	
+	private function setLang($UriSegements, $isEmptyURI)
+	{
+		if($isEmptyURI===false)
+		{
+			return self::getLangFromURI($UriSegements);
+		}
+		else if($this->session->localisation !== null)
+		{
+			$this->lang = $this->getLangFromSession();
+		}
+		else
+		{
+			$this->lang = $this->getLangFromDefault();
+		}
+	}
+	
+	private function checkLang()
+	{
+		$enabledLanguages = self::$locale['enabled_languages'];
+		if(!array_key_exists($this->lang, $enabledLanguages))
+			return false;
+		return true;
+		//$languageFile = $enabledLanguages[$this->lang];
+		//return (file_exists(APP_PATH.DS.self::$locale['localisation_folder'].DS.$languageFile));
+	}
+	
+	private function setSessionLocalization()
+	{
+		$loc = $this->session->localization;
+		($loc!==null)?$loc['lang'] = $this->lang: $loc = array('lang'=>$this->lang);
+		$this->session->localization = $loc;
+	}
+	
+	private function createLocalizationInstance()
+	{
+		$handler = (self::$locale['handler']!=='')?self::$locale['handler']:'Localization';
+		$this->localization = new $handler(self::$locale, $this->lang);
+	}
+	
+	
+}
